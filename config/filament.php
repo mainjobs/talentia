@@ -117,4 +117,8 @@ return [
 
     'system_route_prefix' => 'filament',
 
+    'pages' => [
+        \App\Filament\Pages\Dashboard::class,
+    ],
+
 ];

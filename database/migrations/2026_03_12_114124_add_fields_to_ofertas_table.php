@@ -25,9 +25,9 @@ return new class extends Migration
 
         
         Schema::table('ofertas', function (Blueprint $table) {
-            $table->string('propietario_clientify')->unique()->after('etiqueta_clientify');    
+            $table->string('propietario_clientify')->nullable()->after('criterios_filtrado');    
             $table->json('etiqueta_clientify')->nullable()->after('propietario_clientify');
-            $table->foreignId('source_student_id');
+            $table->foreignId('source_student_id')->nullable();
         });
     }
 
