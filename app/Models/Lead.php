@@ -17,6 +17,7 @@ class Lead extends Model
         'cv_path',
         'in_clientify',
         'synced_at',
+        'estado',
     ];
 
     // Indica a Laravel que 'datos_extraidos' es un array/JSON

@@ -18,6 +18,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Artisan;
 use SebastianBergmann\CodeCoverage\Filter;
+use App\Jobs\ProcesarCVJob;
+use App\Models\Lead;
+use Illuminate\Support\Facades\Bus;
 
 class LeadsTable
 {
@@ -43,6 +46,16 @@ class LeadsTable
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
+                TextColumn::make('estado')
+                    ->label('Estado')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pendiente'   => 'gray',
+                        'procesando'  => 'warning',
+                        'completado'  => 'success',
+                        'error'       => 'danger',
+                        default       => 'gray',
+                    }),
                 IconColumn::make('apto')
                     ->label('Apto')
                     ->boolean()
@@ -107,10 +120,26 @@ class LeadsTable
                         : 'Sincronizar con Clientify'
                     ),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+            ->headerActions([
+                // headerAction para re-procesar errores:
+                Action::make('reintentar_errores')
+                    ->label('Reintentar errores')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn () => Lead::where('estado', 'error')->exists())
+                    ->action(function () {
+                        $leads = Lead::where('estado', 'error')->get();
+
+                        $jobs = $leads->map(fn ($lead) => new ProcesarCVJob($lead))->toArray();
+
+                        Bus::batch($jobs)
+                            ->name('Reintento errores - ' . now()->format('d/m/Y H:i'))
+                            ->allowFailures()
+                            ->dispatch();
+                    })
+                    ->badge(fn () => Lead::where('estado', 'error')->count())
+                    ->badgeColor('danger'),
             ]);
     }
 }

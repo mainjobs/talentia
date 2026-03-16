@@ -71,8 +71,23 @@ class GeminiCVService
             return $datos;
 
         } catch (\Exception $e) {
+            // Detectar rate limit por mensaje de excepción
+            if ($this->esRateLimit($e)) {
+                Log::warning("Rate limit Gemini para {$path}");
+                throw new \App\Exceptions\GeminiRateLimitException($e->getMessage());
+            }
+
             Log::error("Fallo en el servicio Gemini: " . $e->getMessage());
-            return null;
+            throw $e;
         }
+    }
+
+    private function esRateLimit(\Exception $e): bool
+    {
+        $mensaje = strtolower($e->getMessage());
+        return str_contains($mensaje, '429')
+            || str_contains($mensaje, 'rate limit')
+            || str_contains($mensaje, 'quota exceeded')
+            || str_contains($mensaje, 'resource_exhausted');
     }
 }

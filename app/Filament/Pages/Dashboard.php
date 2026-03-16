@@ -31,6 +31,7 @@ class Dashboard extends Page
     public function getWidgets(): array
     {
         return [
+            \App\Filament\Widgets\BatchProgressWidget::class,
             \App\Filament\Widgets\StatsOverviewWidget::class,
             \App\Filament\Widgets\CandidatosPorOfertaWidget::class,
             \App\Filament\Widgets\TasaAptitudWidget::class,
