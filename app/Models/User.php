@@ -70,4 +70,9 @@ class User extends Authenticatable implements FilamentUser
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    public function canAccessHorizon(): bool
+    {
+        return $this->hasRole('admin');
+    }
 }
