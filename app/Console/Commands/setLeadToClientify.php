@@ -90,7 +90,7 @@ class setLeadToClientify extends Command
             //URL CV
             $customFields[] = [
                 'field' => 'CV url',
-                'value' => $lead->cv_path,
+                'value' => 'https://talentia.grupomainjobs.com/storage/' . $lead->cv_path,
             ];
             
             $contactData = [
@@ -100,7 +100,7 @@ class setLeadToClientify extends Command
                 'status'      => 'warm-lead',
                 'gdpr_accept' => true,
                 'owner'       => $clientifyOwner,
-                'CV url'      => $lead->cv_path,
+                'CV url'      => 'https://talentia.grupomainjobs.com/storage/' . $lead->cv_path,
             ];
             
             // Solo añadir custom_fields si hay datos
