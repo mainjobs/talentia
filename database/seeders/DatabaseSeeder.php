@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ExternalPlatformsTableSeeder::class,
             SourceStudentsTableSeeder::class,
-            RolesAndADminSeeder::class,
+            RolesAndAdminSeeder::class,
         ]);
     }
 }
