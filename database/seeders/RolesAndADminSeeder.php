@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
-class RolesAndADminSeeder extends Seeder
+class RolesAndAdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
