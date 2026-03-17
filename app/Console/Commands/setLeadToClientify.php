@@ -87,16 +87,9 @@ class setLeadToClientify extends Command
             // Preparar custom fields
             $customFields = [];
             
-            if ($offer->titulo) {
-                $customFields[] = [
-                    'field' => 'Oferta',
-                    'value' => $offer->titulo,
-                ];
-            }
-            
             //URL CV
             $customFields[] = [
-                'field' => 'URL CV',
+                'field' => 'CV url',
                 'value' => $lead->cv_path,
             ];
             
@@ -107,6 +100,7 @@ class setLeadToClientify extends Command
                 'status'      => 'warm-lead',
                 'gdpr_accept' => true,
                 'owner'       => $clientifyOwner,
+                'CV url'      => $lead->cv_path,
             ];
             
             // Solo añadir custom_fields si hay datos
