@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Artisan;
 use SebastianBergmann\CodeCoverage\Filter;
 use App\Jobs\ProcesarCVJob;
 use App\Models\Lead;
+use Filament\Actions\DeleteAction;
 use Illuminate\Support\Facades\Bus;
 
 class LeadsTable
@@ -27,6 +28,7 @@ class LeadsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->selectable()
             ->columns([
                 TextColumn::make('oferta.titulo')
                     ->numeric()
@@ -98,6 +100,7 @@ class LeadsTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
                 // ✅ Botón de sincronización
                 Action::make('sync_clientify')
                     ->label('Sincronizar')
