@@ -55,4 +55,9 @@ class OfertaResource extends Resource
             'edit' => EditOferta::route('/{record}/edit'),
         ];
     }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasAnyRole(['admin', 'reclutador']);
+    }
 }
