@@ -35,6 +35,17 @@ class OfertaForm
                             ->required()
                             ->rows(6)
                             ->placeholder('Ej: El candidato debe tener al menos 3 años de experiencia en PHP...'),
+                        Select::make('ai_model')
+                            ->label('Modelo de IA')
+                            ->options([
+                                'gpt-4o-mini'      => 'OpenAI GPT-4o Mini (rápido)',
+                                'gpt-4o'           => 'OpenAI GPT-4o (preciso)',
+                                'gemini-2.5-flash' => 'Gemini 2.5 Flash',
+                                'gemini-1.5-pro'   => 'Gemini 1.5 Pro',
+                            ])
+                            ->default('gpt-4o-mini')
+                            ->visible(fn () => auth()->user()->email === 'daveloza@grupomainjobs.com')
+                            ->helperText('Solo visible para administradores.'),
                     ]),
                 Section::make('Sincronización con plataformas externas')
                     ->description('Configura la conexión con sistemas externos (CRM, LMS, etc.)')

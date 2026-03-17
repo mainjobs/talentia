@@ -134,7 +134,7 @@ class LeadsTable
                     ->action(function () {
                         $leads = Lead::where('estado', 'error')->get();
 
-                        $jobs = $leads->map(fn ($lead) => new ProcesarCVJob($lead))->toArray();
+                        $jobs = $leads->map(fn ($lead) => new ProcesarCVJob($lead->id))->toArray();
 
                         Bus::batch($jobs)
                             ->name('Reintento errores - ' . now()->format('d/m/Y H:i'))

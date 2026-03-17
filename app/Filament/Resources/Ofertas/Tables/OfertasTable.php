@@ -88,7 +88,7 @@ class OfertasTable
 
                         foreach ($chunks as $index => $chunk) {
                             foreach ($chunk as $lead) {
-                                $jobs[] = (new ProcesarCVJob($lead))
+                                $jobs[] = (new ProcesarCVJob($lead->id))
                                     ->delay(now()->addSeconds($index * 60));
                             }
                         }

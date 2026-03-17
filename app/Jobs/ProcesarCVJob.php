@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\GeminiRateLimitException;
 use App\Models\Lead;
-use App\Services\GeminiCVService;
+use App\Services\CVServiceFactory;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,67 +17,75 @@ class ProcesarCVJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
     public int $tries   = 3;
-    public int $backoff = 30; // segundos entre reintentos automáticos
+    public int $backoff = 30;
 
     public function __construct(
-        public readonly Lead $lead
+        public readonly int $leadId
     ) {}
 
-    public function handle(GeminiCVService $service): void
+    public function handle(): void
     {
         if ($this->batch()?->cancelled()) {
             return;
         }
 
-        $this->lead->update(['estado' => 'procesando']);
+        $lead = Lead::find($this->leadId);
+
+        if (!$lead) {
+            Log::info("Lead #{$this->leadId} ya no existe, saltando job.");
+            return;
+        }
+
+        $lead->update(['estado' => 'procesando']);
+
+        $model   = $lead->oferta->ai_model ?? 'gpt-4o-mini';
+        $service = CVServiceFactory::make($model);
 
         try {
             $resultado = $service->procesarCandidato(
-                $this->lead->cv_path,
-                $this->lead->oferta->criterios_filtrado  // campo real de tu modelo
+                $lead->cv_path,
+                $lead->oferta->criterios_filtrado,
+                $model
             );
 
             if (!$resultado) {
-                $this->lead->update(['estado' => 'error']);
+                $lead->update(['estado' => 'error']);
                 return;
             }
 
-            // Evitar duplicados por email dentro de la misma oferta
-            $emailDuplicado = Lead::where('oferta_id', $this->lead->oferta_id)
+            $emailDuplicado = Lead::where('oferta_id', $lead->oferta_id)
                 ->where('email', $resultado['datos']['email'])
-                ->where('id', '!=', $this->lead->id)
+                ->where('id', '!=', $lead->id)
                 ->exists();
 
             if ($emailDuplicado) {
-                $this->lead->delete();
+                $lead->delete();
                 return;
             }
 
-            $this->lead->update([
-                'nombre'         => $resultado['datos']['nombre']     ?? null,
-                'email'          => $resultado['datos']['email']      ?? null,
-                'telefono'       => $resultado['datos']['telefono']   ?? null,
+            $lead->update([
+                'nombre'          => $resultado['datos']['nombre']     ?? null,
+                'email'           => $resultado['datos']['email']      ?? null,
+                'telefono'        => $resultado['datos']['telefono']   ?? null,
                 'datos_extraidos' => $resultado['datos'],
-                'analisis_ia'    => $resultado['motivo_decision']     ?? null,
-                'apto'           => $resultado['apto'],
-                'estado'         => 'completado',
+                'analisis_ia'     => $resultado['motivo_decision']     ?? null,
+                'apto'            => $resultado['apto'],
+                'estado'          => 'completado',
             ]);
 
-         } catch (GeminiRateLimitException $e) {
-            // Volver a pendiente y reencolar con 90 segundos de espera
-            $this->lead->update(['estado' => 'pendiente']);
-
-            Log::warning("Rate limit en Lead #{$this->lead->id}, reencolar en 90s");
-
-            self::dispatch($this->lead)->delay(now()->addSeconds(90));
-        }   
+        } catch (\App\Exceptions\OpenAIRateLimitException | \App\Exceptions\GeminiRateLimitException $e) {
+            $lead->update(['estado' => 'pendiente']);
+            Log::warning("Rate limit en Lead #{$lead->id}, reencolar en 90s");
+            self::dispatch($this->leadId)->delay(now()->addSeconds(90));
+        }
     }
 
     public function failed(\Throwable $e): void
     {
-        $this->lead->update([
+        $lead = Lead::find($this->leadId);
+        $lead?->update([
             'estado'      => 'error',
-            'analisis_ia' => 'Error tras ' . $this->tries . ' intentos: ' . $e->getMessage(),
+            'analisis_ia' => 'Error: ' . $e->getMessage(),
         ]);
     }
 }

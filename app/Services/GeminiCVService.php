@@ -9,7 +9,7 @@ use Gemini\Laravel\Facades\Gemini;
 
 class GeminiCVService
 {
-    public function procesarCandidato($path, $criterios)
+    public function procesarCandidato($path, $criterios, string $model = 'gemini-2.5-flash')
     {
         $fullPath = storage_path("app/public/{$path}");
         
@@ -32,7 +32,7 @@ class GeminiCVService
                 }
             }";
 
-            $result = Gemini::generativeModel('models/gemini-2.5-flash')->generateContent([
+            $result = Gemini::generativeModel('models/' . $model)->generateContent([
                 $prompt,
                 new Blob(
                     mimeType: MimeType::APPLICATION_PDF,

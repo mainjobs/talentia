@@ -7,11 +7,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Oferta extends Model
 {
-    protected $fillable = ['titulo', 'descripcion', 'criterios_filtrado', 'sync_with_crm', 'external_platform_id', 'source_student_id', 'propietario_clientify', 'etiqueta_clientify'];
+    protected $fillable = [
+        'titulo', 
+        'descripcion', 
+        'criterios_filtrado', 
+        'sync_with_crm', 
+        'external_platform_id', 
+        'source_student_id', 
+        'propietario_clientify', 
+        'etiqueta_clientify',
+        'ai_model'
+    ];
 
     protected $casts = [
         'sync_with_crm' => 'boolean',
         'etiqueta_clientify' => 'array',
+        'ai_model' => 'string'
     ];
 
     public function leads()
