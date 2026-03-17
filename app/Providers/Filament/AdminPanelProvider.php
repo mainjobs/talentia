@@ -58,6 +58,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->maxContentWidth(Width::Full)
-            ->notifications();
+            ->databaseNotifications()  // ← activa las de base de datos
+            ->databaseNotificationsPolling('30s'); // ← polling cada 30s;
     }
 }
