@@ -143,6 +143,11 @@ class LeadsTable
                     })
                     ->badge(fn () => Lead::where('estado', 'error')->count())
                     ->badgeColor('danger'),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }
