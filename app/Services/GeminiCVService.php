@@ -22,13 +22,24 @@ class GeminiCVService
             $pdfData = base64_encode(file_get_contents($fullPath));
 
             // Prompt optimizado para evitar alucinaciones
-            $prompt = "Actúa como un reclutador. Evalúa el CV adjunto basándote en estos CRITERIOS: '{$criterios}'.
-            Responde EXCLUSIVAMENTE un objeto JSON con esta estructura:
+            $prompt = "Actúa como un reclutador experto. Analiza el CV adjunto basándote en estos CRITERIOS: '{$criterios}'.
+
+            Responde EXCLUSIVAMENTE un objeto JSON con esta estructura, sin markdown ni texto adicional:
             {
                 \"apto\": boolean,
-                \"motivo_decision\": \"string\",
+                \"motivo_decision\": \"Explica detalladamente por qué el candidato ES APTO o NO ES APTO según los criterios. Sé específico y menciona los puntos clave que han determinado la decisión.\",
+                \"resumen_perfil\": \"Descripción breve del perfil profesional del candidato en 2-3 frases.\",
                 \"datos\": {
-                    \"nombre\": \"string\", \"email\": \"string\", \"telefono\": \"string\", \"titulacion\": \"string\"
+                    \"nombre\": \"string\",
+                    \"email\": \"string\",
+                    \"telefono\": \"string\",
+                    \"titulacion\": \"string\",
+                    \"edad\": \"string o null si no se puede determinar\",
+                    \"ubicacion\": \"string o null si no se puede determinar\",
+                    \"experiencia_anios\": \"string o null si no se puede determinar\",
+                    \"experiencia_relevante\": \"Describe brevemente la experiencia más relevante del candidato para el puesto.\",
+                    \"puntos_fuertes\": [\"lista\", \"de\", \"puntos\", \"fuertes\"],
+                    \"puntos_debiles\": [\"lista\", \"de\", \"puntos\", \"débiles\", \"o\", \"carencias\"]
                 }
             }";
 

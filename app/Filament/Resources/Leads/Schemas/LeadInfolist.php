@@ -18,29 +18,43 @@ class LeadInfolist
                 
                 Section::make('Información del Candidato')
                     ->schema([
-                        TextEntry::make('nombre')
-                            ->weight('bold'),
-                        TextEntry::make('email')
-                            ->label('Correo electrónico')
-                            ->placeholder('-'),
-                        TextEntry::make('telefono')
-                            ->placeholder('-'),
-                        TextEntry::make('oferta.titulo')
-                            ->label('Oferta aplicada'),
-                        TextEntry::make('analisis_ia')
-                            ->label('Análisis de Gemini')
-                            ->markdown() // Por si Gemini devuelve negritas o listas
+                        TextEntry::make('nombre')->weight('bold'),
+                        TextEntry::make('email')->label('Correo electrónico')->placeholder('-'),
+                        TextEntry::make('telefono')->placeholder('-'),
+                        TextEntry::make('edad')->placeholder('-'),
+                        TextEntry::make('ubicacion')->label('Ubicación')->placeholder('-'),
+                        TextEntry::make('experiencia_anios')->label('Años de experiencia')->placeholder('-'),
+                        TextEntry::make('oferta.titulo')->label('Oferta aplicada'),
+                    ]),
+
+                Section::make('Análisis de la IA')
+                    ->schema([
+                        TextEntry::make('resumen_perfil')
+                            ->label('Resumen del perfil')
                             ->columnSpanFull(),
-                        TextEntry::make('created_at')
-                            ->label('Fecha de registro')
-                            ->dateTime()
-                            ->size('sm'),
+
+                        TextEntry::make('analisis_ia')
+                            ->label('Motivo de la decisión')
+                            ->markdown()
+                            ->columnSpanFull(),
+
+                        TextEntry::make('puntos_fuertes')
+                            ->label('Puntos fuertes')
+                            ->listWithLineBreaks()
+                            ->bulleted()
+                            ->columnSpanFull(),
+
+                        TextEntry::make('puntos_debiles')
+                            ->label('Puntos débiles / Carencias')
+                            ->listWithLineBreaks()
+                            ->bulleted()
+                            ->columnSpanFull(),
+
                         TextEntry::make('cv_path')
-                        ->label('Currículum')
-                        ->formatStateUsing(fn () => 'Abrir CV')
-                        //->icon('hero-document-text')
-                        ->color('primary')
-                        ->url(fn ($state) => Storage::url($state), shouldOpenInNewTab: true)
+                            ->label('Currículum')
+                            ->formatStateUsing(fn () => 'Abrir CV')
+                            ->color('primary')
+                            ->url(fn ($state) => Storage::url($state), shouldOpenInNewTab: true),
                     ]),
                 
             ]);

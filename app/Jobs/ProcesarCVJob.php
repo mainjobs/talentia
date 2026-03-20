@@ -64,13 +64,19 @@ class ProcesarCVJob implements ShouldQueue
             }
 
             $lead->update([
-                'nombre'          => $resultado['datos']['nombre']     ?? null,
-                'email'           => $resultado['datos']['email']      ?? null,
-                'telefono'        => $resultado['datos']['telefono']   ?? null,
-                'datos_extraidos' => $resultado['datos'],
-                'analisis_ia'     => $resultado['motivo_decision']     ?? null,
-                'apto'            => $resultado['apto'],
-                'estado'          => 'completado',
+                'nombre'            => $resultado['datos']['nombre']               ?? null,
+                'email'             => $resultado['datos']['email']                ?? null,
+                'telefono'          => $resultado['datos']['telefono']             ?? null,
+                'ubicacion'         => $resultado['datos']['ubicacion']            ?? null,
+                'edad'              => $resultado['datos']['edad']                 ?? null,
+                'experiencia_anios' => $resultado['datos']['experiencia_anios']    ?? null,
+                'datos_extraidos'   => $resultado['datos'],
+                'analisis_ia'       => $resultado['motivo_decision']               ?? null,
+                'resumen_perfil'    => $resultado['resumen_perfil']                ?? null,
+                'puntos_fuertes'    => $resultado['datos']['puntos_fuertes']       ?? [],
+                'puntos_debiles'    => $resultado['datos']['puntos_debiles']       ?? [],
+                'apto'              => $resultado['apto'],
+                'estado'            => 'completado',
             ]);
 
         } catch (\App\Exceptions\OpenAIRateLimitException | \App\Exceptions\GeminiRateLimitException $e) {

@@ -11,8 +11,14 @@ class Lead extends Model
         'nombre',
         'email',
         'telefono',
+        'ubicacion',
+        'edad',
+        'experiencia_anios',
         'datos_extraidos',
         'analisis_ia',
+        'resumen_perfil',
+        'puntos_fuertes',
+        'puntos_debiles',
         'apto',
         'cv_path',
         'in_clientify',
@@ -23,6 +29,8 @@ class Lead extends Model
     // Indica a Laravel que 'datos_extraidos' es un array/JSON
     protected $casts = [
         'datos_extraidos' => 'array',
+        'puntos_fuertes'  => 'array',
+        'puntos_debiles'  => 'array',
         'apto' => 'boolean',
         'synced_at' => 'datetime',
     ];
