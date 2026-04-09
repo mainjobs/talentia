@@ -96,12 +96,15 @@ class setLeadToClientify extends Command
             $contactData = [
                 'first_name'  => $lead->nombre,
                 'email'       => $lead->email,
-                'phone'       => $lead->telefono,
                 'status'      => 'warm-lead',
                 'gdpr_accept' => true,
                 'owner'       => $clientifyOwner,
                 'CV url'      => 'https://talentia.grupomainjobs.com/storage/' . $lead->cv_path,
             ];
+
+            if (!empty($lead->telefono)) {
+                $contactData['phone'] = $lead->telefono;
+            }
             
             // Solo añadir custom_fields si hay datos
             if (!empty($customFields)) {
