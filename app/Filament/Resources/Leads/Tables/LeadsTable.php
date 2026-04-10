@@ -29,6 +29,7 @@ class LeadsTable
     {
         return $table
             ->selectable()
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('oferta.titulo')
                     ->numeric()
